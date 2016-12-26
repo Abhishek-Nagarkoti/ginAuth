@@ -4,32 +4,32 @@ package ginAuth
 // https://github.com/gin-gonic/gin
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/astaxie/beego/config"
-	"github.com/gorilla/securecookie"
-	"time"
-	"strconv"
-	"strings"
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/securecookie"
 )
 
 const VERSION = "0.0.1"
 
 // set our global package variables
 var (
-	CookieName string                       // the name of the cookie that will be used, default: "token"
-	ConfigPath string                       // path to config file, default: ""
-	ConfigType string                       // type of config file, default: "ini"
-	Prefix string                           // the key in ctx.Keys[] to use, default: ""
-	HashKey []byte                          // hash key for securecookie
-	BlockKey []byte                         // block key for securecookie
-	Expiration int64                        // time until the cookie expires in seconds, default: 604800
+	CookieName   string                     // the name of the cookie that will be used, default: "token"
+	ConfigPath   string                     // path to config file, default: ""
+	ConfigType   string                     // type of config file, default: "ini"
+	Prefix       string                     // the key in ctx.Keys[] to use, default: ""
+	HashKey      []byte                     // hash key for securecookie
+	BlockKey     []byte                     // block key for securecookie
+	Expiration   int64                      // time until the cookie expires in seconds, default: 604800
 	Unauthorized func(ctx *gin.Context)     // function called if user is not authorized
-	Authorized func(ctx *gin.Context)       // function called if user is authorized
+	Authorized   func(ctx *gin.Context)     // function called if user is authorized
 	SecureCookie *securecookie.SecureCookie // global secure cookie object
 )
 
@@ -69,60 +69,6 @@ func Use(ctx *gin.Context) {
 
 	}
 
-}
-
-// this function loads your specified configuration file and it's values
-func LoadConfig() error {
-
-	if ConfigPath != "" {
-		conf, err := config.NewConfig(ConfigType, ConfigPath)
-		if err != nil {
-
-			return err
-		}
-
-		if cookiename := conf.String("cookiename"); cookiename != "" {
-			CookieName = cookiename
-		}
-
-		if prefix := conf.String("prefix"); prefix != "" {
-			Prefix = prefix
-		}
-
-		if hashkey := conf.String("hashkey"); hashkey != "" {
-
-			val, err := hex.DecodeString(hashkey)
-			if err != nil {
-				return err
-			}
-
-			HashKey = val
-		}
-
-		if blockkey := conf.String("blockkey"); blockkey != "" {
-
-			val, err := hex.DecodeString(blockkey)
-			if err != nil {
-				return err
-			}
-
-			BlockKey = val
-
-		}
-
-		if expiration := conf.String("expiration"); expiration != "" {
-
-			val, err := strconv.ParseInt(expiration, 10, 64)
-			if err != nil {
-				return err
-			}
-
-			Expiration = val
-
-		}
-	}
-
-	return nil
 }
 
 // a private function that simply saves the log in status of the user to the current context
