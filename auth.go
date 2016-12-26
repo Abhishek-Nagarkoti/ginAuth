@@ -67,6 +67,8 @@ func Use(ctx *gin.Context) {
 
 		}
 
+	} else {
+		Unauthorized(ctx)
 	}
 
 }
@@ -132,7 +134,7 @@ func Login(ctx *gin.Context, extra map[string]string) error {
 
 	for key, value := range extra {
 
-		if key == "ip" || key == "hash" || key == "experation" {
+		if key == "ip" || key == "hash" || key == "expiration" {
 			return errors.New("The key '" + key + "' is reserved.")
 		}
 
@@ -146,6 +148,7 @@ func Login(ctx *gin.Context, extra map[string]string) error {
 
 	// encode our cookie data securely
 	SecureCookie = securecookie.New(HashKey, BlockKey)
+
 	if encoded, err := SecureCookie.Encode(CookieName, data); err == nil {
 
 		//set our cookie
