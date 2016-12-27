@@ -103,6 +103,7 @@ func Check(ctx *gin.Context) error {
 			hash := hashHeader(ctx)
 
 			expiration, err := strconv.ParseInt(data["expiration"], 10, 64)
+
 			if err != nil {
 				return err
 			}
@@ -167,7 +168,8 @@ func Logout(ctx *gin.Context) {
 
 	cookie := http.Cookie{Name: CookieName, Path: "/", MaxAge: -1}
 	http.SetCookie(ctx.Writer, &cookie)
-	saveLogin(ctx, false)
+	ctx.AbortWithStatus(http.StatusUnauthorized)
+	return
 
 }
 
