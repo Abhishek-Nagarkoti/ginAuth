@@ -17,8 +17,6 @@ import (
 	"github.com/gorilla/securecookie"
 )
 
-const VERSION = "0.0.1"
-
 // set our global package variables
 var (
 	CookieName   string                     // the name of the cookie that will be used, default: "token"
@@ -89,7 +87,6 @@ func Check(ctx *gin.Context) error {
 
 	// get the encrypted cookie value
 	cookie, err := ctx.Request.Cookie(CookieName)
-
 	if err == nil {
 
 		data := make(map[string]string)
