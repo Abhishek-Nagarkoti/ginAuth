@@ -150,7 +150,7 @@ func Login(ctx *gin.Context, extra map[string]string) (error, string) {
 	encoded, err := SecureCookie.Encode(CookieName, data)
 	if err == nil {
 		//set our cookie
-		cookie := http.Cookie{Name: CookieName, Value: encoded, Path: "/", MaxAge: int(Expiration)}
+		cookie := http.Cookie{Name: CookieName, Value: encoded, Path: "/", Domain: "", MaxAge: int(Expiration)}
 		http.SetCookie(ctx.Writer, &cookie)
 
 	} else {
