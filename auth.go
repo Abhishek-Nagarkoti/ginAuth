@@ -126,14 +126,14 @@ func Check(ctx *gin.Context) error {
 // handles the login process
 // the first param is a map of strings that will be added to the cookie data before encryption and will be
 // able to be recovered when Check() is called
-func Login(ctx *gin.Context, extra map[string]string) error {
+func Login(ctx *gin.Context, extra map[string]string) (error, string) {
 
 	data := make(map[string]string)
 
 	for key, value := range extra {
 
 		if key == "ip" || key == "hash" || key == "expiration" {
-			return errors.New("The key '" + key + "' is reserved.")
+			return errors.New("The key '" + key + "' is reserved."), ""
 		}
 
 		data[key] = value
@@ -147,17 +147,17 @@ func Login(ctx *gin.Context, extra map[string]string) error {
 	// encode our cookie data securely
 	SecureCookie = securecookie.New(HashKey, BlockKey)
 
-	if encoded, err := SecureCookie.Encode(CookieName, data); err == nil {
-
+	encoded, err := SecureCookie.Encode(CookieName, data)
+	if err == nil {
 		//set our cookie
 		cookie := http.Cookie{Name: CookieName, Value: encoded, Path: "/", MaxAge: int(Expiration)}
 		http.SetCookie(ctx.Writer, &cookie)
 
 	} else {
-		return err
+		return err, ""
 	}
 
-	return nil
+	return nil, encoded
 }
 
 // removes our token cookie, sets the context to: not logged in
