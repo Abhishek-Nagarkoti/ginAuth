@@ -157,7 +157,7 @@ func Login(ctx *gin.Context, extra map[string]string) (error, string) {
 		return err, ""
 	}
 
-	return nil, CookieName + "=" + encoded
+	return nil, encoded
 }
 
 // removes our token cookie, sets the context to: not logged in
