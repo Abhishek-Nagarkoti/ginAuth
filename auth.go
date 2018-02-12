@@ -7,6 +7,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -119,6 +120,36 @@ func Check(ctx *gin.Context) error {
 			return err
 		}
 
+	} else {
+		fmt.Println("here now", Token)
+		data := make(map[string]string)
+
+		SecureCookie = securecookie.New(HashKey, BlockKey)
+		if err := SecureCookie.Decode(CookieName, Token, &data); err == nil {
+
+			// save the login cookie data to the context
+			ctx.Set(Prefix+"cookieData", data)
+
+			hash := hashHeader(ctx)
+
+			expiration, err := strconv.ParseInt(data["expiration"], 10, 64)
+
+			if err != nil {
+				return err
+			}
+
+			if hash == data["hash"] && ip(ctx) == data["ip"] && time.Now().Before(time.Unix(expiration, 0)) {
+
+				saveLogin(ctx, true)
+
+			} else {
+				//call the full logout because it'll remove the cookie as well
+				Logout(ctx)
+			}
+
+		} else {
+			return err
+		}
 	}
 
 	return nil
