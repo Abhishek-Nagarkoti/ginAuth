@@ -29,6 +29,7 @@ var (
 	Unauthorized func(ctx *gin.Context)     // function called if user is not authorized
 	Authorized   func(ctx *gin.Context)     // function called if user is authorized
 	SecureCookie *securecookie.SecureCookie // global secure cookie object
+	Token        string
 )
 
 func init() {
